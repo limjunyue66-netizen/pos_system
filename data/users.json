@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1,
+        "name": "Admin User",
+        "username": "admin",
+        "email": "admin@minimarket.local",
+        "password_hash": "$2y$10$2irsvOouK7MSTe3RmY9SROW4Arb\/rMumhTfg.ffguim8WGm1OeX0C",
+        "role": "admin",
+        "locked": false,
+        "failed_attempts": 3
+    },
+    {
+        "id": 2,
+        "name": "Cashier Rina",
+        "username": "rina",
+        "email": "rina@minimarket.local",
+        "password_hash": "$2y$10$ihzlrkUCIdoEU7ip0wmLo.NMWV7HSRXm.qUNHqso1b0Dt9zBDD2m2",
+        "role": "cashier",
+        "locked": false,
+        "failed_attempts": 0
+    },
+    {
+        "id": 3,
+        "name": "wei hern",
+        "username": "cashier",
+        "email": "weihern08@gmail.com",
+        "password_hash": "$2y$10$enzIvsnfIlwlJ2PuA2nWQubFCoLQt22190fcmHpewVJUj1bwpMGJe",
+        "role": "cashier",
+        "locked": false,
+        "failed_attempts": 0
+    },
+    {
+        "id": 4,
+        "name": "WWW",
+        "username": "www1",
+        "email": "www@gmail.com",
+        "password_hash": "$2y$10$MOT0.3VbvN71BZ25IJq4bOIjLi8wwl\/bKXVlNs.1Ltwj93bw6FyXa",
+        "role": "cashier",
+        "locked": false,
+        "failed_attempts": 0
+    },
+    {
+        "id": 5,
+        "name": "EZ",
+        "username": "ez11",
+        "email": "ez@gmail.com",
+        "password_hash": "$2y$10$nVtqSXDLJNfBdBMTwc2u..aqIFolTqd1GuNglH8emJ10SMx51e6OS",
+        "role": "cashier",
+        "locked": false,
+        "failed_attempts": 0
+    },
+    {
+        "id": 6,
+        "name": "limjunyue",
+        "username": "junyue",
+        "email": "junyue11@gmail.com",
+        "password_hash": "$2y$10$diw62yIxG\/bpRArj1z83\/.0h14LQH.YbQl796T0RQDkAT8PfuSN5S",
+        "role": "cashier",
+        "locked": false,
+        "failed_attempts": 0
+    }
+]
