@@ -4,3 +4,4 @@ Thumbs.db
 .env
 includes/database.php
 /vendor/
+tools/

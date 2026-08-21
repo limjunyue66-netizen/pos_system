@@ -7,7 +7,7 @@
         "category": "Beverages",
         "cost_price": 2,
         "sell_price": 3.2,
-        "stock": 42,
+        "stock": 41,
         "reorder_level": 10,
         "status": "active",
         "image": "assets\/images\/beverage.svg"

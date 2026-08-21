@@ -1,1 +1,29 @@
-[]
+[
+    {
+        "id": 1,
+        "receipt_no": "POS-260821-0001",
+        "user_id": 1,
+        "cashier": "Admin User",
+        "customer_id": null,
+        "customer_name": "Walk-in Customer",
+        "items": [
+            {
+                "product_id": 1,
+                "name": "Apple Juice 500ml",
+                "sku": "MM-0010",
+                "quantity": 1,
+                "unit_price": 3.2,
+                "subtotal": 3.2
+            }
+        ],
+        "subtotal": 3.2,
+        "tax": 0.1,
+        "discount": 0,
+        "total_amount": 3.3,
+        "paid_amount": 50,
+        "change_amount": 46.7,
+        "payment_method": "cash",
+        "status": "paid",
+        "created_at": "2026-08-21 10:48:59"
+    }
+]
