@@ -1,167 +1,140 @@
 <?php
-// POS System Entry Point
-// Minimal PHP bootstrap for a modern POS frontend
+require_once __DIR__ . '/includes/store.php';
+require_once __DIR__ . '/includes/helpers.php';
 
-session_start();
+$pageTitle = 'Dashboard';
+include __DIR__ . '/partials/header.php';
 
-if (!isset($_SESSION['user'])) {
-    header('Location: login.php');
-    exit;
+$products = getProducts();
+$sales = getSales();
+$today = date('Y-m-d');
+$todayTotal = 0;
+$weekTotal = 0;
+$monthTotal = 0;
+$weekStart = date('Y-m-d', strtotime('-6 days'));
+$monthPrefix = date('Y-m');
+$topCounts = [];
+
+foreach ($sales as $sale) {
+    $date = substr($sale['created_at'] ?? '', 0, 10);
+    $amount = (float) $sale['total_amount'];
+    if ($date === $today) {
+        $todayTotal += $amount;
+    }
+    if ($date >= $weekStart) {
+        $weekTotal += $amount;
+    }
+    if (strpos($sale['created_at'] ?? '', $monthPrefix) === 0) {
+        $monthTotal += $amount;
+    }
+    foreach ($sale['items'] as $item) {
+        $name = $item['name'];
+        $topCounts[$name] = ($topCounts[$name] ?? 0) + (int) $item['quantity'];
+    }
 }
 
-$user = $_SESSION['user'];
-$role = $user['role'] ?? 'cashier';
+arsort($topCounts);
+$topProducts = array_slice(array_keys($topCounts), 0, 5);
+$lowStock = 0;
+foreach ($products as $product) {
+    if ((int) $product['stock'] <= (int) ($product['reorder_level'] ?? 0)) {
+        $lowStock++;
+    }
+}
+$recent = array_slice(array_reverse($sales), 0, 8);
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS Dashboard - MiniMarket POS</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-    <div class="app-shell">
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="brand-logo">MiniMarket POS</div>
-                <div class="brand-subtitle">Retail & Convenience</div>
-            </div>
+<section class="dashboard-grid">
+    <article class="card stats-card">
+        <h2>Today's Sales</h2>
+        <p class="stat-value"><?php echo money($todayTotal); ?></p>
+    </article>
+    <article class="card stats-card">
+        <h2>Weekly Sales</h2>
+        <p class="stat-value"><?php echo money($weekTotal); ?></p>
+    </article>
+    <article class="card stats-card">
+        <h2>Monthly Revenue</h2>
+        <p class="stat-value"><?php echo money($monthTotal); ?></p>
+    </article>
+    <article class="card stats-card">
+        <h2>Total Orders</h2>
+        <p class="stat-value"><?php echo count($sales); ?></p>
+    </article>
+    <article class="card stats-card">
+        <h2>Total Products</h2>
+        <p class="stat-value"><?php echo count($products); ?></p>
+    </article>
+    <article class="card stats-card low-stock">
+        <h2>Low Stock Alerts</h2>
+        <p><?php echo $lowStock; ?> items need restock</p>
+    </article>
+</section>
 
-            <nav class="nav-menu">
-                <a class="nav-item active" href="index.php">Dashboard</a>
-                <?php if ($role === 'admin'): ?>
-                    <a class="nav-item" href="sales.php">Sales Management</a>
-                    <a class="nav-item" href="products.php">Product Management</a>
-                    <a class="nav-item" href="inventory.php">Inventory</a>
-                    <a class="nav-item" href="customers.php">Customers</a>
-                    <a class="nav-item" href="suppliers.php">Suppliers</a>
-                    <a class="nav-item" href="reports.php">Reports</a>
-                    <a class="nav-item" href="users.php">Users</a>
-                    <a class="nav-item" href="settings.php">Settings</a>
-                <?php else: ?>
-                    <a class="nav-item" href="pos.php">POS Counter</a>
-                    <a class="nav-item" href="history.php">Sales History</a>
-                <?php endif; ?>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="profile-card">
-                    <div class="profile-name"><?php echo htmlspecialchars($user['name'] ?? 'Cashier'); ?></div>
-                    <div class="profile-role"><?php echo ucfirst(htmlspecialchars($role)); ?></div>
-                </div>
-                <a class="button secondary" href="logout.php">Logout</a>
-            </div>
-        </aside>
-
-        <main class="main-content">
-            <header class="topbar">
-                <h1>Dashboard</h1>
-                <div class="topbar-actions">
-                    <button class="button icon-button" onclick="toggleTheme()">Toggle Theme</button>
-                </div>
-            </header>
-
-            <section class="dashboard-grid">
-                <article class="card stats-card info-card">
-                    <h2>Admin Login Demo</h2>
-                    <p class="stat-value">admin / admin123</p>
-                    <p class="card-note">Admin role with full access for dashboard, product, inventory, and reports.</p>
-                </article>
-                <article class="card stats-card">
-                    <h2>Today's Sales</h2>
-                    <p class="stat-value">RM 2,150.00</p>
-                </article>
-                <article class="card stats-card">
-                    <h2>Weekly Sales</h2>
-                    <p class="stat-value">RM 14,780.00</p>
-                </article>
-                <article class="card stats-card">
-                    <h2>Monthly Revenue</h2>
-                    <p class="stat-value">RM 52,320.00</p>
-                </article>
-                <article class="card stats-card">
-                    <h2>Total Orders</h2>
-                    <p class="stat-value">214</p>
-                </article>
-                <article class="card stats-card">
-                    <h2>Total Products</h2>
-                    <p class="stat-value">1,248</p>
-                </article>
-                <article class="card stats-card low-stock">
-                    <h2>Low Stock Alerts</h2>
-                    <p>8 items need restock</p>
-                </article>
-            </section>
-
-            <section class="charts-section">
-                <div class="card chart-card">
-                    <div class="card-header">
-                        <h2>Sales Trend</h2>
-                        <span>Last 7 days</span>
-                    </div>
-                    <div class="chart-placeholder">[Chart Placeholder]</div>
-                </div>
-                <div class="card chart-card">
-                    <div class="card-header">
-                        <h2>Top Selling Products</h2>
-                        <span>Last 30 days</span>
-                    </div>
-                    <ul class="top-products-list">
-                        <li>1. 500ml Mineral Water</li>
-                        <li>2. Coffee 3-in-1</li>
-                        <li>3. Rice 5kg</li>
-                        <li>4. Instant Noodles</li>
-                        <li>5. Bread</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section class="recent-section">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Recent Transactions</h2>
-                        <a class="link-button" href="sales.php">View All</a>
-                    </div>
-                    <table class="table-list">
-                        <thead>
-                            <tr>
-                                <th>Receipt</th>
-                                <th>Customer</th>
-                                <th>Total</th>
-                                <th>Payment</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>#POS-2356</td>
-                                <td>Walk-in</td>
-                                <td>RM 28.90</td>
-                                <td>Cash</td>
-                                <td><span class="status success">Paid</span></td>
-                            </tr>
-                            <tr>
-                                <td>#POS-2355</td>
-                                <td>Ahmad</td>
-                                <td>RM 62.50</td>
-                                <td>DuitNow QR</td>
-                                <td><span class="status success">Paid</span></td>
-                            </tr>
-                            <tr>
-                                <td>#POS-2354</td>
-                                <td>Walk-in</td>
-                                <td>RM 15.20</td>
-                                <td>Boost</td>
-                                <td><span class="status success">Paid</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
+<section class="charts-section">
+    <div class="card chart-card">
+        <div class="card-header">
+            <h2>Quick Actions</h2>
+        </div>
+        <div class="actions-row">
+            <a class="button primary" href="pos.php">Open POS Counter</a>
+            <?php if (isAdmin()): ?>
+                <a class="button secondary" href="products.php">Add Product</a>
+                <a class="button secondary" href="users.php">Add User</a>
+                <a class="button secondary" href="sales.php">View Receipts</a>
+            <?php else: ?>
+                <a class="button secondary" href="history.php">My Receipts</a>
+            <?php endif; ?>
+        </div>
+        <p class="muted-note">Pay at the POS counter to create a receipt. Then use View / Print to open it.</p>
     </div>
+    <div class="card chart-card">
+        <div class="card-header">
+            <h2>Top Selling Products</h2>
+        </div>
+        <ul class="top-products-list">
+            <?php if (!$topProducts): ?>
+                <li>No sales yet</li>
+            <?php endif; ?>
+            <?php foreach ($topProducts as $index => $name): ?>
+                <li><?php echo ($index + 1) . '. ' . htmlspecialchars($name); ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</section>
 
-    <script src="assets/js/app.js"></script>
-</body>
-</html>
+<section class="recent-section">
+    <div class="card">
+        <div class="card-header">
+            <h2>Recent Transactions</h2>
+            <a class="link-button" href="<?php echo isAdmin() ? 'sales.php' : 'history.php'; ?>">View All</a>
+        </div>
+        <table class="table-list">
+            <thead>
+                <tr>
+                    <th>Receipt</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!$recent): ?>
+                    <tr><td colspan="6">No transactions yet.</td></tr>
+                <?php endif; ?>
+                <?php foreach ($recent as $sale): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($sale['receipt_no']); ?></td>
+                        <td><?php echo htmlspecialchars($sale['customer_name']); ?></td>
+                        <td><?php echo money($sale['total_amount']); ?></td>
+                        <td><?php echo htmlspecialchars(strtoupper($sale['payment_method'])); ?></td>
+                        <td><span class="status success"><?php echo ucfirst($sale['status']); ?></span></td>
+                        <td><a class="link-button" href="receipt.php?no=<?php echo urlencode($sale['receipt_no']); ?>">View / Print</a></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</section>
+<?php include __DIR__ . '/partials/footer.php'; ?>

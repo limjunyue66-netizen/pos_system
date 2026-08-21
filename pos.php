@@ -1,12 +1,34 @@
 <?php
+require_once __DIR__ . '/includes/store.php';
+
 $pageTitle = 'POS Counter';
 include __DIR__ . '/partials/header.php';
+
+$posProducts = array_values(array_filter(getProducts(), function ($product) {
+    return ($product['status'] ?? 'active') === 'active';
+}));
+$posCustomers = getCustomers();
+$posPayload = [];
+foreach ($posProducts as $product) {
+    $posPayload[] = [
+        'id' => (int) $product['id'],
+        'name' => $product['name'],
+        'sku' => $product['sku'],
+        'category' => $product['category'],
+        'price' => (float) $product['sell_price'],
+        'stock' => (int) $product['stock'],
+        'barcode' => (string) ($product['barcode'] ?? ''),
+        'image' => $product['image'] ?? 'assets/images/default.svg',
+    ];
+}
 ?>
 <script>
     window.currentUser = {
-        name: '<?php echo htmlspecialchars($user['name'], ENT_QUOTES); ?>',
-        username: '<?php echo htmlspecialchars($user['username'], ENT_QUOTES); ?>'
+        name: <?php echo json_encode($user['name']); ?>,
+        username: <?php echo json_encode($user['username']); ?>
     };
+    window.posProducts = <?php echo json_encode($posPayload); ?>;
+    window.posCustomers = <?php echo json_encode($posCustomers); ?>;
 </script>
 <div class="pos-grid">
     <section class="pos-panel">
@@ -31,13 +53,16 @@ include __DIR__ . '/partials/header.php';
             </div>
             <div class="form-group">
                 <label>Customer</label>
-                <select>
-                    <option>Walk-in Customer</option>
-                    <option>Ahmad Hassan</option>
-                    <option>Siti Aisyah</option>
+                <select id="customerSelect">
+                    <option value="">Walk-in Customer</option>
+                    <?php foreach ($posCustomers as $customer): ?>
+                        <option value="<?php echo (int) $customer['id']; ?>">
+                            <?php echo htmlspecialchars($customer['name']); ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
-            <button class="button secondary">Create New Customer</button>
+            <button class="button secondary" type="button" id="createCustomerButton">Create New Customer</button>
         </div>
     </section>
     <section class="cart-panel">
@@ -82,11 +107,11 @@ include __DIR__ . '/partials/header.php';
                 <div id="changeValue">RM 0.00</div>
             </div>
             <div class="action-buttons">
-                <button id="payButton" class="button primary full">Pay</button>
-                <button id="printButton" class="button secondary full">Print Receipt</button>
-                <button id="holdButton" class="button secondary full">Hold</button>
-                <button id="drawerButton" class="button secondary full">Open Drawer</button>
-                <button id="clearButton" class="button secondary full">Clear Cart</button>
+                <button id="payButton" class="button primary full" type="button">Pay</button>
+                <button id="printButton" class="button secondary full" type="button">Print Receipt</button>
+                <button id="holdButton" class="button secondary full" type="button">Hold</button>
+                <button id="drawerButton" class="button secondary full" type="button">Open Drawer</button>
+                <button id="clearButton" class="button secondary full" type="button">Clear Cart</button>
             </div>
         </div>
     </section>

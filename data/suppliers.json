@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "name": "KK Food Trading",
+        "contact_person": "En. Rafi",
+        "phone": "019-876 5432",
+        "email": "rafi@kkfood.my",
+        "address": "Shah Alam, Selangor"
+    },
+    {
+        "id": 2,
+        "name": "FreshCare Supplies",
+        "contact_person": "Puan Lina",
+        "phone": "017-112 2334",
+        "email": "lina@freshcare.my",
+        "address": "Subang Jaya, Selangor"
+    }
+]

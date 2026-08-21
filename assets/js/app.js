@@ -34,7 +34,28 @@ function initNav() {
     });
 }
 
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.add('open');
+    }
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.remove('open');
+    }
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initNav();
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', event => {
+            if (event.target === modal) {
+                modal.classList.remove('open');
+            }
+        });
+    });
 });

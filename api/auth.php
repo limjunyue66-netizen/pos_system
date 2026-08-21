@@ -140,3 +140,34 @@ function registerUser($name, $username, $email, $password) {
     saveUsers($users);
     return $newUser;
 }
+
+function createManagedUser($name, $username, $email, $password, $role = 'cashier') {
+    $name = trim($name);
+    $username = strtolower(trim($username));
+    $email = strtolower(trim($email));
+    $role = $role === 'admin' ? 'admin' : 'cashier';
+
+    if (!$name || !$username || !$email || !$password) {
+        return ['error' => 'All fields are required.'];
+    }
+    if (usernameExists($username) || emailExists($email)) {
+        return ['error' => 'Username or email already registered.'];
+    }
+
+    $users = readUsers();
+    $nextId = count($users) ? max(array_column($users, 'id')) + 1 : 1;
+    $newUser = [
+        'id' => $nextId,
+        'name' => $name,
+        'username' => $username,
+        'email' => $email,
+        'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+        'role' => $role,
+        'locked' => false,
+        'failed_attempts' => 0,
+        'is_active' => true,
+    ];
+    $users[] = $newUser;
+    saveUsers($users);
+    return $newUser;
+}

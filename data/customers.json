@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "name": "Ahmad Hassan",
+        "phone": "012-345 6789",
+        "email": "ahmad@mail.com",
+        "membership_no": "MM-0001",
+        "loyalty_points": 120
+    },
+    {
+        "id": 2,
+        "name": "Siti Aisyah",
+        "phone": "013-987 6543",
+        "email": "siti@mail.com",
+        "membership_no": "MM-0002",
+        "loyalty_points": 85
+    }
+]

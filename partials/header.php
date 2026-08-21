@@ -43,6 +43,8 @@ function navItem($href, $label, $show = true) {
             </div>
             <nav class="nav-menu">
                 <?php navItem('index.php', 'Dashboard'); ?>
+                <?php navItem('pos.php', 'POS Counter'); ?>
+                <?php navItem('history.php', 'Sales History'); ?>
                 <?php navItem('sales.php', 'Sales Management', $role === 'admin'); ?>
                 <?php navItem('products.php', 'Product Management', $role === 'admin'); ?>
                 <?php navItem('inventory.php', 'Inventory', $role === 'admin'); ?>
@@ -51,10 +53,6 @@ function navItem($href, $label, $show = true) {
                 <?php navItem('reports.php', 'Reports', $role === 'admin'); ?>
                 <?php navItem('users.php', 'Users', $role === 'admin'); ?>
                 <?php navItem('settings.php', 'Settings', $role === 'admin'); ?>
-                <?php if ($role !== 'admin'): ?>
-                    <?php navItem('pos.php', 'POS Counter'); ?>
-                    <?php navItem('history.php', 'Sales History'); ?>
-                <?php endif; ?>
             </nav>
             <div class="sidebar-footer">
                 <div class="profile-card">
